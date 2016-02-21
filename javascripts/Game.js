@@ -18,12 +18,22 @@ define([
 		for(var c = 0; c < 10; c++) {
 			matrix[c] = [];
 			for(var r = 0; r < 10; r++) {
-				matrix[c][r] = 20 * (Math.cos(c) + Math.sin(r));
+				if(c === 5 && r === 6) {
+					matrix[c][r] = {
+						default: 5,//10 * (Math.cos(c) + Math.sin(r)),
+						upperLeft: 20,
+						upperRight: 20
+					};
+				}
+				else {
+					matrix[c][r] = 10 * (Math.cos(c) + Math.sin(r));
+				}
 			}
 		}
 		this.entities = [
 			new Slope({
 				matrix: matrix,
+				lightDir: new Vector3(-5, -10, -7),
 				// cols: 10,
 				// rows: 10,
 				tileWidth: 30,
@@ -35,7 +45,15 @@ define([
 		this.time = 0;
 	}
 	Game.prototype.update = function(t) {
-		camera.dir.y += t / 20;
+		this.time += t;
+		/*camera.pos.x = 20 * Math.cos(this.time / 3);
+		camera.pos.y = 20;
+		camera.pos.z = 20 * Math.sin(this.time / 3);
+		camera.dir.x = -camera.pos.x;
+		camera.dir.y = -camera.pos.y;
+		camera.dir.z = -camera.pos.z;
+		camera.pos.x += 150;
+		camera.pos.z += 150;*/
 	};
 	Game.prototype.render = function() {
 		//adjust camera

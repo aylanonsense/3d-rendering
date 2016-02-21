@@ -9,8 +9,8 @@ define([
 	Vector3,
 	Poly
 ) {
-	function Heightfield(params) {
-		var r, c, i;
+	function SeamedHeightfield(params) {
+		var r, c, i, v;
 		var cols = params.cols || params.matrix.length;
 		var rows = params.rows || params.matrix[0].length;
 		var tileWidth = params.tileWidth;
@@ -25,14 +25,44 @@ define([
 			for(r = 0; r < rows; r++) {
 				if(params.matrix) {
 					if(params.matrix[c] && params.matrix[c][r]) {
-						this.vertexMatrix[c][r] = new Vector3(c * tileWidth, params.matrix[c][r], r * tileLength);
+						if(typeof params.matrix[c][r] === 'object') {
+							v = new Vector3(c * tileWidth, params.matrix[c][r].default, r * tileLength);
+							this.vertexMatrix[c][r] = {
+								upperRight: v,
+								upperLeft: v,
+								lowerLeft: v,
+								lowerRight: v
+							};
+							var keys = [ 'upperRight', 'upperLeft', 'lowerLeft', 'lowerRight' ];
+							for(i = 0; i < keys.length; i++) {
+								var k = keys[i];
+								if(typeof params.matrix[c][r][k] === 'number') {
+									this.vertexMatrix[c][r][k] = new Vector3(c * tileWidth, params.matrix[c][r][k], r * tileLength);
+								}
+							}
+						}
+						else {
+							v = new Vector3(c * tileWidth, params.matrix[c][r], r * tileLength);
+							this.vertexMatrix[c][r] = {
+								upperRight: v,
+								upperLeft: v,
+								lowerLeft: v,
+								lowerRight: v
+							};
+						}
 					}
 					else {
 						this.vertexMatrix[c][r] = null;
 					}
 				}
 				else {
-					this.vertexMatrix[c][r] = new Vector3(c * tileWidth, params.height, r * tileLength);
+					v = new Vector3(c * tileWidth, params.height, r * tileLength);
+					this.vertexMatrix[c][r] = {
+						upperRight: v,
+						upperLeft: v,
+						lowerLeft: v,
+						lowerRight: v
+					};
 				}
 			}
 		}
@@ -44,22 +74,30 @@ define([
 				if(this.vertexMatrix[c][r]) {
 					if((c + r) % 2 === 0) {
 						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c + 1][r] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(this.vertexMatrix[c][r],
-								this.vertexMatrix[c + 1][r], this.vertexMatrix[c][r + 1]));
+							this.polyMatrix[c][r].push(new Poly(
+								this.vertexMatrix[c][r].lowerRight,
+								this.vertexMatrix[c + 1][r].lowerLeft,
+								this.vertexMatrix[c][r + 1].upperRight));
 						}
 						if(this.vertexMatrix[c - 1] && this.vertexMatrix[c - 1][r] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(this.vertexMatrix[c][r],
-								this.vertexMatrix[c][r + 1], this.vertexMatrix[c - 1][r]));
+							this.polyMatrix[c][r].push(new Poly(
+								this.vertexMatrix[c][r].lowerLeft,
+								this.vertexMatrix[c][r + 1].upperLeft,
+								this.vertexMatrix[c - 1][r].lowerRight));
 						}
 					}
 					else {
 						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c + 1][r + 1] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(this.vertexMatrix[c][r],
-								this.vertexMatrix[c + 1][r + 1], this.vertexMatrix[c][r + 1]));
+							this.polyMatrix[c][r].push(new Poly(
+								this.vertexMatrix[c][r].lowerRight,
+								this.vertexMatrix[c + 1][r + 1].upperLeft,
+								this.vertexMatrix[c][r + 1].upperRight));
 						}
 						if(this.vertexMatrix[c - 1] && this.vertexMatrix[c - 1][r + 1] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(this.vertexMatrix[c][r],
-								this.vertexMatrix[c][r + 1], this.vertexMatrix[c - 1][r + 1]));
+							this.polyMatrix[c][r].push(new Poly(
+								this.vertexMatrix[c][r].lowerLeft,
+								this.vertexMatrix[c][r + 1].upperLeft,
+								this.vertexMatrix[c - 1][r + 1].upperRight));
 						}
 					}
 				}
@@ -77,7 +115,7 @@ define([
 			}
 		}
 	}
-	Heightfield.prototype.render = function() {
+	SeamedHeightfield.prototype.render = function() {
 		for(var c = 0; c < this.polyMatrix.length; c++) {
 			for(var r = 0; r < this.polyMatrix[c].length; r++) {
 				for(var i = 0; i < this.polyMatrix[c][r].length; i++) {
@@ -86,5 +124,5 @@ define([
 			}
 		}
 	};
-	return Heightfield;
+	return SeamedHeightfield;
 });

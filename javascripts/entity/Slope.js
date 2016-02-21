@@ -1,10 +1,10 @@
 define([
-	'math/Heightfield'
+	'math/SeamedHeightfield'
 ], function(
-	Heightfield
+	SeamedHeightfield
 ) {
 	function Slope(params) {
-		this.heightfield = new Heightfield(params);
+		this.heightfield = new SeamedHeightfield(params);
 	}
 	Slope.prototype.render = function() {
 		this.heightfield.render();
