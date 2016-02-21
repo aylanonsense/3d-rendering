@@ -6,12 +6,6 @@ define([
 	Game
 ) {
 	return function() {
-		//set up the canvas
-		if(global.RENDER) {
-			canvas.setAttribute("width", global.CANVAS_WIDTH);
-			canvas.setAttribute("height", global.CANVAS_HEIGHT);
-		}
-
 		//create the game
 		var game = new Game();
 

@@ -4,7 +4,7 @@ define([
 	Vector3
 ) {
 	return {
-		pos: new Vector3(0, 0, 0),
+		pos: new Vector3(0, -75, 0),
 		dir: new Vector3(-0.2, -1, -1),
 		zoom: 1,
 

@@ -14,19 +14,29 @@ define([
 	Slope
 ) {
 	function Game() {
+		var matrix = [];
+		for(var c = 0; c < 10; c++) {
+			matrix[c] = [];
+			for(var r = 0; r < 10; r++) {
+				matrix[c][r] = 20 * (Math.cos(c) + Math.sin(r));
+			}
+		}
 		this.entities = [
 			new Slope({
-				cols: 10,
-				rows: 10,
-				tileWidth: 20,
-				tileLength: 20,
-				pos: new Vector3(0, 0, 0),
-				height: 20,
+				matrix: matrix,
+				// cols: 10,
+				// rows: 10,
+				tileWidth: 30,
+				tileLength: 30,
+				// height: 20,
+				pos: new Vector3(0, 0, 0)
 			})
 		];
 		this.time = 0;
 	}
-	Game.prototype.update = function(t) {};
+	Game.prototype.update = function(t) {
+		camera.dir.y += t / 20;
+	};
 	Game.prototype.render = function() {
 		//adjust camera
 		camera.calcUnitVectors();

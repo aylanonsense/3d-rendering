@@ -10,10 +10,16 @@ define([
 	var DEFAULT_FILL_COLOR = '#fff';
 	var DEFAULT_STROKE_COLOR = '#fff';
 
-	var ctx = global.RENDER ? canvas.getContext("2d") : null;
-	ctx.fillStyle = DEFAULT_FILL_COLOR;
-	ctx.strokeStyle = DEFAULT_STROKE_COLOR;
-	ctx.lineWidth = 0;
+	var ctx;
+	if(global.RENDER) {
+		ctx = canvas.getContext("2d");
+		ctx.fillStyle = DEFAULT_FILL_COLOR;
+		ctx.strokeStyle = DEFAULT_STROKE_COLOR;
+		ctx.lineWidth = 0;
+	}
+	else {
+		ctx = null;
+	}
 
 	function applyDrawParams(params, defualtDrawMode) {
 		var result = {
@@ -88,16 +94,15 @@ define([
 				}
 			}
 		},
-		poly: function(/* x1, y1, x2, y2, ..., */ params) {
+		poly: function(points, params) {
 			if(global.RENDER) {
-				params = arguments.length % 2 === 0 ? {} : arguments[arguments.length - 1];
 				var result = applyDrawParams(params, 'stroke');
 				ctx.beginPath();
-				ctx.moveTo(result.zoom * arguments[0] + result.offset.x, result.zoom * arguments[1] + result.offset.y);
-				for(var i = 2; i < arguments.length - 1; i += 2) {
-					ctx.lineTo(result.zoom * arguments[i] + result.offset.x, result.zoom * arguments[i + 1] + result.offset.y);
+				ctx.moveTo(result.zoom * points[0].x + result.offset.x, result.zoom * points[0].y + result.offset.y);
+				for(var i = 1; i < points.length; i++) {
+					ctx.lineTo(result.zoom * points[i].x + result.offset.x, result.zoom * points[i].y + result.offset.y);
 				}
-				if(params && params.close) {
+				if(!params || params.close !== false) {
 					ctx.closePath();
 				}
 				if(result.shouldFill) {
