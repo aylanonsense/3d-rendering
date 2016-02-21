@@ -49,15 +49,17 @@ define([
 						projections[c][r + 1].x, projections[c][r + 1].y,
 						{ stroke: '#fff', thickness: 1});
 				}
-				if((c + r) % 2 === 0 && projections[c + 1] && projections[c + 1][r + 1]) {
-					draw.line(projections[c][r].x, projections[c][r].y,
-						projections[c + 1][r + 1].x, projections[c + 1][r + 1].y,
-						{ stroke: '#fff', thickness: 1});
-				}
-				if((c + r) % 2 === 0 && projections[c - 1] && projections[c - 1][r + 1]) {
-					draw.line(projections[c][r].x, projections[c][r].y,
-						projections[c - 1][r + 1].x, projections[c - 1][r + 1].y,
-						{ stroke: '#fff', thickness: 1});
+				if((c + r) % 2 === 0) {
+					if(projections[c + 1] && projections[c + 1][r + 1]) {
+						draw.line(projections[c][r].x, projections[c][r].y,
+							projections[c + 1][r + 1].x, projections[c + 1][r + 1].y,
+							{ stroke: '#fff', thickness: 1});
+					}
+					if(projections[c - 1] && projections[c - 1][r + 1]) {
+						draw.line(projections[c][r].x, projections[c][r].y,
+							projections[c - 1][r + 1].x, projections[c - 1][r + 1].y,
+							{ stroke: '#fff', thickness: 1});
+					}
 				}
 			}
 		}

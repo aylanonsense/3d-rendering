@@ -11,6 +11,7 @@ define([
 			canvas.setAttribute("width", global.CANVAS_WIDTH);
 			canvas.setAttribute("height", global.CANVAS_HEIGHT);
 		}
+
 		//create the game
 		var game = new Game();
 
