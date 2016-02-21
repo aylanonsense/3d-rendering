@@ -3,15 +3,20 @@ define([
 	'display/camera',
 	'math/Vector3',
 	'math/Vector',
-	'display/draw'
+	'display/draw',
+	'math/projectVector',
+	'math/Heightfield'
 ], function(
 	global,
 	camera,
 	Vector3,
 	Vector,
-	draw
+	draw,
+	projectVector,
+	Heightfield
 ) {
 	function Game() {
+		this.entities = [];
 		this.time = 0;
 		this.blips = [
 			{
@@ -30,6 +35,14 @@ define([
 				color: '#00f'
 			}
 		];
+		this.entities.push(new Heightfield({
+			cols: 10,
+			rows: 10,
+			tileWidth: 20,
+			tileLength: 20,
+			pos: new Vector3(-50, 0, -50),
+			height: 20,
+		}));
 	}
 	Game.prototype.update = function(t) {
 		this.time += t;
@@ -62,17 +75,9 @@ define([
 			var pos = projectVector(this.blips[i].pos);
 			draw.circle(pos.x, pos.y, 5, { fill: this.blips[i].color });
 		}
+		for(i = 0; i < this.entities.length; i++) {
+			this.entities[i].render();
+		}
 	};
-
-	//helper methods
-	function projectVector(v) {
-		var zAxis = camera.dir.clone().normalize();
-		var yAxis = (new Vector3(0, -1, 0)).proj(zAxis).add(0, 1, 0).normalize();
-		var xAxis = zAxis.clone().cross(yAxis).normalize();
-		var u = v.clone().subtract(camera.pos);
-		u = u.createVectorTo(0, 0, 0).proj(zAxis).add(u);
-		return new Vector(u.dot(xAxis), u.dot(yAxis));
-	}
-
 	return Game;
 });
