@@ -1,5 +1,5 @@
 define([
-	'math/Vector3'
+	'geom/Vector3'
 ], function(
 	Vector3
 ) {

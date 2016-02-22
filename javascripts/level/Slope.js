@@ -1,5 +1,5 @@
 define([
-	'math/SeamedHeightfield'
+	'geom/SeamedHeightfield'
 ], function(
 	SeamedHeightfield
 ) {
@@ -8,6 +8,9 @@ define([
 	}
 	Slope.prototype.render = function() {
 		this.heightfield.render();
+	};
+	Slope.prototype.findCollisionWithEntity = function(entity) {
+		return this.heightfield.findCollisionWithEntity.apply(this.heightfield, arguments);
 	};
 	return Slope;
 });

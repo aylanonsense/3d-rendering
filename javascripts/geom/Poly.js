@@ -1,7 +1,7 @@
 define([
 	'display/draw',
 	'display/camera',
-	'math/Vector3',
+	'geom/Vector3',
 	'math/projectVector'
 ], function(
 	draw,
