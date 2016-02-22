@@ -5,7 +5,7 @@ define([
 	'geom/Vector3',
 	'math/projectVector',
 	'level/Slope',
-	'entity/Player'
+	'entity/Ball'
 ], function(
 	global,
 	draw,
@@ -13,22 +13,18 @@ define([
 	Vector3,
 	projectVector,
 	Slope,
-	Player
+	Ball
 ) {
 	function Game() {
+		var c, r;
 		this.time = 0;
 
 		//create slopes
 		var matrix = [];
-		for(var c = 0; c < 15; c++) {
+		for(c = 0; c < 20; c++) {
 			matrix[c] = [];
-			for(var r = 0; r < 15; r++) {
-				// if(c === 5 && r === 6) {
-					// matrix[c][r] = { default: 5, upperLeft: 20, upperRight: 20 };
-				// }
-				// else {
-					matrix[c][r] = 10 + 7 * (Math.cos(1.5 * c) + Math.sin(1.5 * r));
-				// }
+			for(r = 0; r < 20; r++) {
+				matrix[c][r] = 10 + 7 * (Math.cos(1.5 * c) + Math.sin(1.5 * r));
 			}
 		}
 		this.slopes = [
@@ -44,28 +40,31 @@ define([
 		];
 
 		//create entities
-		this.entities = [
-			new Player({
-				game: this,
-				x: 100,
-				y: 100,
-				z: 100
-			})
-		];
+		this.entities = [];
+		for(c = 0; c < 10; c++) {
+			for(r = 0; r < 10; r++) {
+				this.entities.push(new Ball({
+					game: this,
+					x: 150 + 100 * Math.random(),
+					y: 100,
+					z: 150 + 100 * Math.random()
+				}));
+			}
+		}
 	}
 	Game.prototype.update = function(t) {
 		var i;
 		this.time += t;
 
 		//adjust camera
-		camera.pos.x = 20 * Math.cos(this.time / 3);
-		camera.pos.y = 20;
-		camera.pos.z = 20 * Math.sin(this.time / 3);
+		camera.pos.x = 20 * Math.cos(this.time / 7);
+		camera.pos.y = 10;
+		camera.pos.z = 20 * Math.sin(this.time / 7);
 		camera.dir.x = -camera.pos.x;
 		camera.dir.y = -camera.pos.y;
 		camera.dir.z = -camera.pos.z;
-		camera.pos.x += 150;
-		camera.pos.z += 150;
+		camera.pos.x += 200;
+		camera.pos.z += 200;
 
 		//update entities
 		for(i = 0; i < this.entities.length; i++) {

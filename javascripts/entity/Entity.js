@@ -13,25 +13,36 @@ define([
 		this.prevPos = this.pos.clone();
 		this.vel = params.vel ? params.vel : new Vector3(params.velX, params.velY, params.velZ);
 		this.gravity = params.gravity ? params.gravity : new Vector3(params.gravityX, params.gravityY, params.gravityZ);
+		this.bounce = typeof params.bounce === 'number' ? params.bounce : 1;
+		this.friction = typeof params.friction === 'number' ? params.friction : 0.005;
 	}
 	Entity.prototype.update = function(t) {
 		this.prevPos.set(this.pos);
 		this.vel.addMult(this.gravity, t);
 		this.pos.addMult(this.vel, t);
+		this.vel.multiply(1 - this.friction);
 
 		//check for intersections with slopes
 		for(var i = 0; i < this.game.slopes.length; i++) {
 			var slope = this.game.slopes[i];
 			var collision = slope.findCollisionWithEntity(this);
-			if(collision && this.vel.y < 0) {
-				this.pos.y = collision.y;
-				this.vel.y *= -1;
+			if(collision && this.pos.y < collision.y) {
+				//reflect the velocity about the normal of the surface
+				if(this.vel.dot(collision.normal) >= 0) {
+					this.pos.y = collision.y;
+					var normalVel = this.vel.clone().proj(collision.normal);
+					this.vel.subtract(normalVel);
+					this.vel.addMult(normalVel, -this.bounce);
+				}
+				else {
+					//entity is heading upwards from beneath the slope
+				}
 			}
 		}
 	};
 	Entity.prototype.render = function() {
 		var v = projectVector(this.pos);
-		draw.circle(v.x, v.y, 5, { fill: '#ccc', stroke: '#666', thickness: 1 });
+		draw.circle(v.x, v.y - 1, 2, { fill: '#f00', stroke: '#700', thickness: 1 });
 	};
 	return Entity;
 });

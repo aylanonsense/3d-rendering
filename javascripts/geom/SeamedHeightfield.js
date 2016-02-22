@@ -9,7 +9,7 @@ define([
 	Vector3,
 	Poly
 ) {
-	var HEIGHT_ERROR = 5;
+	var HEIGHT_ERROR = 200;
 
 	function SeamedHeightfield(params) {
 		var r, c, i, v;
@@ -24,7 +24,7 @@ define([
 			this.vertexMatrix[c] = [];
 			for(r = 0; r < rows; r++) {
 				if(params.matrix) {
-					if(params.matrix[c] && params.matrix[c][r]) {
+					if(params.matrix[c] && (params.matrix[c][r] || params.matrix[c][r] === 0)) {
 						if(typeof params.matrix[c][r] === 'object') {
 							v = new Vector3(c * this.tileWidth, params.matrix[c][r].default, r * this.tileLength);
 							this.vertexMatrix[c][r] = {
@@ -163,14 +163,11 @@ define([
 					entity.pos.x * poly.normal.x -
 					entity.pos.z * poly.normal.z) / poly.normal.y;
  
-				//has the entity passed through that height?
-				if(entity.prevPos.y + HEIGHT_ERROR / 2 >= y &&
-					entity.pos.y - HEIGHT_ERROR / 2 <= y) {
-					//yes! collision!
-					return {
-						y: y
-					};
-				}
+				//we don't determine if the entity has passed through this height, leaving that to the entity
+				return {
+					y: y,
+					normal: poly.normal
+				};
 			}
 		}
 		return null;
