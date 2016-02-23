@@ -4,9 +4,9 @@ define([
 	Vector3
 ) {
 	return {
-		pos: new Vector3(150, 0, 150),
-		dir: new Vector3(0, -1, -1),
-		zoom: 1,
+		pos: new Vector3(400, 0, 0),
+		dir: new Vector3(0.4, -0.4, -1),
+		zoom: 0.5,
 
 		//mathy stuffs:
 		xUnit: new Vector3(0, 0, 0), //red (-x: left, +x: right)

@@ -1,8 +1,8 @@
 define({
 	//rendering/canvas
 	RENDER: true,
-	CANVAS_WIDTH: 600,
-	CANVAS_HEIGHT: 400,
+	CANVAS_WIDTH: 800,
+	CANVAS_HEIGHT: 600,
 
 	//input
 	KEY_BINDINGS: {

@@ -13,21 +13,21 @@ define([
 
 	function SeamedHeightfield(params) {
 		var r, c, i, v;
-		var cols = params.cols || params.matrix.length;
-		var rows = params.rows || params.matrix[0].length;
+		var rows = params.rows || params.matrix.length;
+		var cols = params.cols || params.matrix[0].length;
 		this.tileWidth = params.tileWidth;
 		this.tileLength = params.tileLength;
 
 		//create vertices
-		this.vertexMatrix = [];
-		for(c = 0; c < cols; c++) {
-			this.vertexMatrix[c] = [];
-			for(r = 0; r < rows; r++) {
+		var vertexMatrix = [];
+		for(r = 0; r < rows; r++) {
+			vertexMatrix[r] = [];
+			for(c = 0; c < cols; c++) {
 				if(params.matrix) {
-					if(params.matrix[c] && (params.matrix[c][r] || params.matrix[c][r] === 0)) {
-						if(typeof params.matrix[c][r] === 'object') {
-							v = new Vector3(c * this.tileWidth, params.matrix[c][r].default, r * this.tileLength);
-							this.vertexMatrix[c][r] = {
+					if(params.matrix[r] && (params.matrix[r][c] || params.matrix[r][c] === 0)) {
+						if(typeof params.matrix[r][c] === 'object') {
+							v = new Vector3(c * this.tileWidth, params.matrix[r][c].default, r * this.tileLength);
+							vertexMatrix[r][c] = {
 								upperRight: v,
 								upperLeft: v,
 								lowerLeft: v,
@@ -36,14 +36,14 @@ define([
 							var keys = [ 'upperRight', 'upperLeft', 'lowerLeft', 'lowerRight' ];
 							for(i = 0; i < keys.length; i++) {
 								var k = keys[i];
-								if(typeof params.matrix[c][r][k] === 'number') {
-									this.vertexMatrix[c][r][k] = new Vector3(c * this.tileWidth, params.matrix[c][r][k], r * this.tileLength);
+								if(typeof params.matrix[r][c][k] === 'number') {
+									vertexMatrix[r][c][k] = new Vector3(c * this.tileWidth, params.matrix[r][c][k], r * this.tileLength);
 								}
 							}
 						}
 						else {
-							v = new Vector3(c * this.tileWidth, params.matrix[c][r], r * this.tileLength);
-							this.vertexMatrix[c][r] = {
+							v = new Vector3(c * this.tileWidth, params.matrix[r][c], r * this.tileLength);
+							vertexMatrix[r][c] = {
 								upperRight: v,
 								upperLeft: v,
 								lowerLeft: v,
@@ -52,12 +52,12 @@ define([
 						}
 					}
 					else {
-						this.vertexMatrix[c][r] = null;
+						vertexMatrix[r][c] = null;
 					}
 				}
 				else {
 					v = new Vector3(c * this.tileWidth, params.height, r * this.tileLength);
-					this.vertexMatrix[c][r] = {
+					vertexMatrix[r][c] = {
 						upperRight: v,
 						upperLeft: v,
 						lowerLeft: v,
@@ -67,49 +67,49 @@ define([
 			}
 		}
 		this.polyMatrix = [];
-		for(c = 0; c < cols; c++) {
-			this.polyMatrix[c] = [];
-			for(r = 0; r < rows; r++) {
-				this.polyMatrix[c][r] = [];
-				if(this.vertexMatrix[c][r]) {
+		for(r = 0; r < rows; r++) {
+			this.polyMatrix[r] = [];
+			for(c = 0; c < cols; c++) {
+				this.polyMatrix[r][c] = [];
+				if(vertexMatrix[r][c]) {
 					if((c + r) % 2 === 0) {
-						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c + 1][r] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(
-								this.vertexMatrix[c][r].lowerRight,
-								this.vertexMatrix[c + 1][r].lowerLeft,
-								this.vertexMatrix[c][r + 1].upperRight, { color: '#f00' }));
+						if(vertexMatrix[r][c + 1] && vertexMatrix[r + 1] && vertexMatrix[r + 1][c]) {
+							this.polyMatrix[r][c].push(new Poly(
+								vertexMatrix[r][c].lowerRight,
+								vertexMatrix[r][c + 1].lowerLeft,
+								vertexMatrix[r + 1][c].upperRight, { color: '#f00' }));
 						}
 						else {
-							this.polyMatrix[c][r].push(null);
+							this.polyMatrix[r][c].push(null);
 						}
-						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c][r + 1] && this.vertexMatrix[c + 1][r] && this.vertexMatrix[c + 1][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(
-								this.vertexMatrix[c][r + 1].upperRight,
-								this.vertexMatrix[c + 1][r].lowerLeft,
-								this.vertexMatrix[c + 1][r + 1].upperLeft, { color: '#ff0' }));
+						if(vertexMatrix[r + 1] && vertexMatrix[r + 1][c] && vertexMatrix[r][c + 1] && vertexMatrix[r + 1][c + 1]) {
+							this.polyMatrix[r][c].push(new Poly(
+								vertexMatrix[r + 1][c].upperRight,
+								vertexMatrix[r][c + 1].lowerLeft,
+								vertexMatrix[r + 1][c + 1].upperLeft, { color: '#ff0' }));
 						}
 						else {
-							this.polyMatrix[c][r].push(null);
+							this.polyMatrix[r][c].push(null);
 						}
 					}
 					else {
-						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c + 1][r + 1] && this.vertexMatrix[c][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(
-								this.vertexMatrix[c][r].lowerRight,
-								this.vertexMatrix[c + 1][r + 1].upperLeft,
-								this.vertexMatrix[c][r + 1].upperRight, { color: '#0f0' }));
+						if(vertexMatrix[r + 1] && vertexMatrix[r + 1][c + 1] && vertexMatrix[r + 1][c]) {
+							this.polyMatrix[r][c].push(new Poly(
+								vertexMatrix[r][c].lowerRight,
+								vertexMatrix[r + 1][c + 1].upperLeft,
+								vertexMatrix[r + 1][c].upperRight, { color: '#0f0' }));
 						}
 						else {
-							this.polyMatrix[c][r].push(null);
+							this.polyMatrix[r][c].push(null);
 						}
-						if(this.vertexMatrix[c + 1] && this.vertexMatrix[c + 1][r] && this.vertexMatrix[c + 1][r + 1]) {
-							this.polyMatrix[c][r].push(new Poly(
-								this.vertexMatrix[c][r].lowerRight,
-								this.vertexMatrix[c + 1][r].lowerLeft,
-								this.vertexMatrix[c + 1][r + 1].upperLeft, { color: '#00f' }));
+						if(vertexMatrix[r][c + 1] && vertexMatrix[r + 1] && vertexMatrix[r + 1][c + 1]) {
+							this.polyMatrix[r][c].push(new Poly(
+								vertexMatrix[r][c].lowerRight,
+								vertexMatrix[r][c + 1].lowerLeft,
+								vertexMatrix[r + 1][c + 1].upperLeft, { color: '#00f' }));
 						}
 						else {
-							this.polyMatrix[c][r].push(null);
+							this.polyMatrix[r][c].push(null);
 						}
 					}
 				}
@@ -117,24 +117,24 @@ define([
 		}
 		//calculate light
 		var lightDir = params.lightDir.clone().normalize();
-		for(c = 0; c < cols; c++) {
-			for(r = 0; r < rows; r++) {
-				for(i = 0; i < this.polyMatrix[c][r].length; i++) {
-					if(this.polyMatrix[c][r][i]) {
-						var amtSame = this.polyMatrix[c][r][i].normal.dot(lightDir);
+		for(r = 0; r < rows; r++) {
+			for(c = 0; c < cols; c++) {
+				for(i = 0; i < this.polyMatrix[r][c].length; i++) {
+					if(this.polyMatrix[r][c][i]) {
+						var amtSame = this.polyMatrix[r][c][i].normal.dot(lightDir);
 						var lightness = Math.min(Math.max(1, Math.floor(10 * amtSame)), 9);
-						this.polyMatrix[c][r][i].color = "#" + (lightness - 1) + (lightness - 1) + lightness;
+						this.polyMatrix[r][c][i].color = "#" + (lightness - 1) + (lightness - 1) + lightness;
 					}
 				}
 			}
 		}
 	}
 	SeamedHeightfield.prototype.render = function() {
-		for(var c = 0; c < this.polyMatrix.length; c++) {
-			for(var r = 0; r < this.polyMatrix[c].length; r++) {
-				for(var i = 0; i < this.polyMatrix[c][r].length; i++) {
-					if(this.polyMatrix[c][r][i]) {
-						this.polyMatrix[c][r][i].render();
+		for(var r = 0; r < this.polyMatrix.length; r++) {
+			for(var c = 0; c < this.polyMatrix[r].length; c++) {
+				for(var i = 0; i < this.polyMatrix[r][c].length; i++) {
+					if(this.polyMatrix[r][c][i]) {
+						this.polyMatrix[r][c][i].render();
 					}
 				}
 			}
@@ -145,7 +145,7 @@ define([
 		var c = Math.floor(x / this.tileWidth);
 		var r = Math.floor(z / this.tileLength);
 		//figure out which cell it's over
-		if(this.polyMatrix[c] && this.polyMatrix[c][r]) {
+		if(this.polyMatrix[r] && this.polyMatrix[r][c]) {
 			//now we figure out which polygon in that cell it's over
 			var i;
 			if((c + r) % 2 === 0) {
@@ -154,8 +154,8 @@ define([
 			else {
 				i = x > -z ? 0 : 1;
 			}
-			if(this.polyMatrix[c][r][i]) {
-				return this.polyMatrix[c][r][i];
+			if(this.polyMatrix[r][c][i]) {
+				return this.polyMatrix[r][c][i];
 			}
 		}
 		return null;

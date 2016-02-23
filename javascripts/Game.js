@@ -21,21 +21,31 @@ define([
 
 		//create slopes
 		var matrix = [];
-		for(c = 0; c < 20; c++) {
-			matrix[c] = [];
-			for(r = 0; r < 20; r++) {
-				matrix[c][r] = 10 + 7 * (Math.cos(1.5 * c) + Math.sin(1.5 * r));
+		for(r = 0; r < 50; r++) {
+			matrix[r] = [];
+			for(c = 0; c < 12; c++) {
+				var h = 50 * 10 - 10 * r;
+				h -= 20 * Math.sin(2 * Math.PI * (c + 10) / 12);
+				if(r + c < 28) {
+					h += 40 + 2 * c;
+				}
+				h += 3 * Math.abs(c - 6) * Math.random();
+				if((c < 1 && r < 11) || (c < 2 && r < 3) || (c > 10 && r > 10 && r < 35) ||
+					(c > 9 && r > 20 && r < 30) || (c < 1 && r > 35)) {
+					h = null;
+				}
+				matrix[r][c] = h;
 			}
 		}
 		this.slopes = [
 			new Slope({
 				matrix: matrix,
 				lightDir: new Vector3(-6, -10, -4),
-				// cols: 10,
-				// rows: 10,
-				tileWidth: 20,
-				tileLength: 20
+				// cols: 3,
+				// rows: 4,
 				// height: 20,
+				tileWidth: 30,
+				tileLength: 30
 			})
 		];
 
@@ -57,14 +67,14 @@ define([
 		this.time += t;
 
 		//adjust camera
-		camera.pos.x = 20 * Math.cos(this.time / 7);
+		/*camera.pos.x = 20 * Math.cos(this.time / 7);
 		camera.pos.y = 10;
 		camera.pos.z = 20 * Math.sin(this.time / 7);
 		camera.dir.x = -camera.pos.x;
 		camera.dir.y = -camera.pos.y;
 		camera.dir.z = -camera.pos.z;
 		camera.pos.x += 200;
-		camera.pos.z += 200;
+		camera.pos.z += 200;*/
 
 		//update entities
 		for(i = 0; i < this.entities.length; i++) {
