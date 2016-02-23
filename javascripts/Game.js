@@ -51,30 +51,19 @@ define([
 
 		//create entities
 		this.entities = [];
-		for(c = 0; c < 10; c++) {
-			for(r = 0; r < 10; r++) {
-				this.entities.push(new Board({
-					game: this,
-					x: 150 + 100 * Math.random(),
-					y: 100,
-					z: 150 + 100 * Math.random()
-				}));
-			}
+		for(i = 0; i < 1; i++) {
+			this.entities.push(new Board({
+				game: this,
+				x: 150 + 100 * Math.random(),
+				y: 100,
+				z: 10 + 100 * Math.random()
+			}));
 		}
+		this.player = this.entities[0];
 	}
 	Game.prototype.update = function(t) {
 		var i;
 		this.time += t;
-
-		//adjust camera
-		/*camera.pos.x = 20 * Math.cos(this.time / 7);
-		camera.pos.y = 10;
-		camera.pos.z = 20 * Math.sin(this.time / 7);
-		camera.dir.x = -camera.pos.x;
-		camera.dir.y = -camera.pos.y;
-		camera.dir.z = -camera.pos.z;
-		camera.pos.x += 200;
-		camera.pos.z += 200;*/
 
 		//update entities
 		for(i = 0; i < this.entities.length; i++) {
@@ -85,12 +74,19 @@ define([
 		}
 		for(i = 0; i < this.entities.length; i++) {
 			this.entities[i].endOfFrame(t);
+			if(this.entities[i].pos.y < 0) {
+				this.entities[i].pos.set(150 + 100 * Math.random(), 100, 10 + 100 * Math.random());
+				this.entities[i].vel.set(0, 0, 0);
+			}
 		}
 	};
 	Game.prototype.render = function() {
 		var i;
 
-		//recalculate camera mathy stuff
+		//adjust camera
+		camera.pos.set(this.player.pos);
+		camera.dir.set(0.0, -0.4, -1);
+		camera.zoom = 2;
 		camera.calcUnitVectors();
 
 		//clear bg

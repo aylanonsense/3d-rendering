@@ -5,7 +5,7 @@ define([
 ) {
 	return {
 		pos: new Vector3(400, 0, 0),
-		dir: new Vector3(0.4, -0.4, -1),
+		dir: new Vector3(0.0, -0.4, -1),
 		zoom: 0.5,
 
 		//mathy stuffs:
