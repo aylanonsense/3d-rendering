@@ -140,8 +140,8 @@ define([
 			}
 		}
 	};
-	SeamedHeightfield.prototype.findCollisionWithEntity = function(entity) {
-		var x = entity.pos.x, z = entity.pos.z;
+	SeamedHeightfield.prototype._findPolyUnder = function(x, z) {
+		if(arguments.length === 1) { z = x.z; x = x.x; }
 		var c = Math.floor(x / this.tileWidth);
 		var r = Math.floor(z / this.tileLength);
 		//figure out which cell it's over
@@ -155,20 +155,20 @@ define([
 				i = x > -z ? 0 : 1;
 			}
 			if(this.polyMatrix[c][r][i]) {
-				var poly = this.polyMatrix[c][r][i];
-				//ok we have the right polygon, is there a collision?
-				var y = (poly.vectors[0].x * poly.normal.x +
-					poly.vectors[0].y * poly.normal.y +
-					poly.vectors[0].z * poly.normal.z -
-					entity.pos.x * poly.normal.x -
-					entity.pos.z * poly.normal.z) / poly.normal.y;
- 
-				//we don't determine if the entity has passed through this height, leaving that to the entity
-				return {
-					y: y,
-					normal: poly.normal
-				};
+				return this.polyMatrix[c][r][i];
 			}
+		}
+		return null;
+	};
+	SeamedHeightfield.prototype.findCollisionWithEntity = function(entity) {
+		var poly = this._findPolyUnder(entity.pos.x, entity.pos.z);
+		if(poly) {
+			//we don't determine if the entity has passed through this height, leaving that to the entity
+			return {
+				y: poly.findHeightAt(entity.pos.x, entity.pos.z),
+				poly: poly,
+				normal: poly.normal
+			};
 		}
 		return null;
 	};

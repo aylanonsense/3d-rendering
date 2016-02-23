@@ -20,6 +20,14 @@ define([
 		var edge2 = this.vectors[1].createVectorTo(this.vectors[2]);
 		this.normal.set(edge1).cross(edge2).normalize();
 	};
+	Poly.prototype.findHeightAt = function(x, z) {
+		if(arguments.length === 1 ) { z = x.z; x = x.x; }
+		return (this.vectors[0].x * this.normal.x +
+			this.vectors[0].y * this.normal.y +
+			this.vectors[0].z * this.normal.z -
+			x * this.normal.x -
+			z * this.normal.z) / this.normal.y;
+	};
 	Poly.prototype.render = function() {
 		var projections = [
 			projectVector(this.vectors[0]),

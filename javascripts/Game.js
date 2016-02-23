@@ -5,7 +5,7 @@ define([
 	'geom/Vector3',
 	'math/projectVector',
 	'level/Slope',
-	'entity/Ball'
+	'entity/Board'
 ], function(
 	global,
 	draw,
@@ -13,7 +13,7 @@ define([
 	Vector3,
 	projectVector,
 	Slope,
-	Ball
+	Board
 ) {
 	function Game() {
 		var c, r;
@@ -43,7 +43,7 @@ define([
 		this.entities = [];
 		for(c = 0; c < 10; c++) {
 			for(r = 0; r < 10; r++) {
-				this.entities.push(new Ball({
+				this.entities.push(new Board({
 					game: this,
 					x: 150 + 100 * Math.random(),
 					y: 100,
@@ -68,7 +68,13 @@ define([
 
 		//update entities
 		for(i = 0; i < this.entities.length; i++) {
+			this.entities[i].startOfFrame(t);
+		}
+		for(i = 0; i < this.entities.length; i++) {
 			this.entities[i].update(t);
+		}
+		for(i = 0; i < this.entities.length; i++) {
+			this.entities[i].endOfFrame(t);
 		}
 	};
 	Game.prototype.render = function() {
